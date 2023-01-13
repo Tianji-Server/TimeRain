@@ -52,11 +52,9 @@ public final class TimeRain extends JavaPlugin {
     }
 
     private void applyRainEffectToPlayer(Player player) {
-        player.damage(1.0);
+        player.damage(0.5);
         player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 0));
         player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40, 0));
-        player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 40, 0));
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 40, 0));
         if (player.getSaturation() > 0) {
             player.setSaturation(Math.max(player.getSaturation() - 1, 0f));
         } else {
@@ -77,7 +75,7 @@ public final class TimeRain extends JavaPlugin {
         if (player.getInventory().getItemInMainHand().getType().getMaxDurability() > 0) {
             player.getInventory().getItemInMainHand().setDurability((short) (player.getInventory().getItemInMainHand().getDurability() - 2));
         }
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new UUID(0, 0), new TextComponent("找地方避雨！"));
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new UUID(0, 0), new TextComponent("您感觉自己正在光速掉SAN中，请火速找个地方避雨消除效果！"));
     }
 
     @Override
