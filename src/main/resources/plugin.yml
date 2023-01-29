@@ -1,7 +1,7 @@
 name: TimeRain
 version: '${project.version}'
 main: com.ghostchu.timerain.TimeRain
-api-version: 1.18
+api-version: 1.17
 commands:
   toggletimerain:
     description: Toogle TimeRain
