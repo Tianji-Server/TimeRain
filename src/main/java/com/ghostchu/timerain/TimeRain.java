@@ -1,19 +1,13 @@
 package com.ghostchu.timerain;
 
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.Locale;
-import java.util.UUID;
 
 public final class TimeRain extends JavaPlugin {
     @Override
@@ -22,9 +16,9 @@ public final class TimeRain extends JavaPlugin {
         saveDefaultConfig();
         Bukkit.getScheduler().runTaskTimer(this, () -> Bukkit.getWorlds().forEach(world -> {
             if (!world.hasStorm()) {
-                world.setGameRule(GameRule.RANDOM_TICK_SPEED, 3);
+                world.setGameRule(GameRules.RANDOM_TICK_SPEED, 3);
             } else {
-                world.setGameRule(GameRule.RANDOM_TICK_SPEED, 15);
+                world.setGameRule(GameRules.RANDOM_TICK_SPEED, 15);
                 checkPlayers(world);
             }
         }), 10, 30);
@@ -34,7 +28,7 @@ public final class TimeRain extends JavaPlugin {
         world.getPlayers().forEach(player -> {
             if (player.getGameMode() != GameMode.SURVIVAL)
                 return;
-            String biomeName = player.getLocation().getBlock().getBiome().name().toLowerCase(Locale.ROOT);
+            String biomeName = player.getLocation().getBlock().getBiome().getKey().getKey();
             boolean rain = !biomeName.contains("desert");
             if (rain && biomeName.contains("savana"))
                 rain = false;
@@ -52,30 +46,14 @@ public final class TimeRain extends JavaPlugin {
     }
 
     private void applyRainEffectToPlayer(Player player) {
-        player.damage(0.5);
         player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 0));
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40, 0));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 0));
         if (player.getSaturation() > 0) {
             player.setSaturation(Math.max(player.getSaturation() - 1, 0f));
         } else {
             player.setFoodLevel(Math.max(player.getFoodLevel() - 1, 0));
         }
-        // Reduce player items durability
-        for (ItemStack item : player.getInventory().getArmorContents()) {
-            if (item != null && item.getType().getMaxDurability() > 0) {
-                short maxuses = item.getType().getMaxDurability();
-                short durability = (short) (maxuses + 5 - item.getDurability());
-                if (durability <= item.getType().getMaxDurability()) {
-                    item.setDurability(durability);
-                } else {
-                    item.setType(Material.AIR);
-                }
-            }
-        }
-        if (player.getInventory().getItemInMainHand().getType().getMaxDurability() > 0) {
-            player.getInventory().getItemInMainHand().setDurability((short) (player.getInventory().getItemInMainHand().getDurability() - 2));
-        }
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new UUID(0, 0), new TextComponent("您感觉自己正在光速掉SAN中，请火速找个地方避雨消除效果！"));
+        player.sendActionBar("您感觉自己正在光速掉SAN中，请火速找个地方避雨消除效果！");
     }
 
     @Override
