@@ -1,5 +1,7 @@
 package com.ghostchu.timerain;
 
+import java.util.Locale;
+
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -67,13 +69,38 @@ public final class TimeRain extends JavaPlugin {
             return false;
         }
 
+        boolean enabled = getConfig().getBoolean("enabled", true);
         if (args.length == 0) {
-            return false;
+            enabled = !enabled;
+        } else {
+            Boolean parsed = parseToggle(args[0]);
+            if (parsed == null) {
+                sender.sendMessage("Usage: /" + label + " [on|off]");
+                return true;
+            }
+            enabled = parsed;
         }
 
-        getConfig().set("enabled", Boolean.parseBoolean(args[0]));
+        getConfig().set("enabled", enabled);
         saveConfig();
-        sender.sendMessage("Time Rain is now " + (Boolean.parseBoolean(args[0]) ? "enabled" : "disabled"));
+        sender.sendMessage("Time Rain is now " + (enabled ? "enabled" : "disabled"));
         return true;
+    }
+
+    private Boolean parseToggle(String input) {
+        switch (input.toLowerCase(Locale.ROOT)) {
+            case "true":
+            case "on":
+            case "enable":
+            case "enabled":
+                return Boolean.TRUE;
+            case "false":
+            case "off":
+            case "disable":
+            case "disabled":
+                return Boolean.FALSE;
+            default:
+                return null;
+        }
     }
 }

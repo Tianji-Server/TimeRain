@@ -4,5 +4,5 @@ main: com.ghostchu.timerain.TimeRain
 api-version: '26.2'
 commands:
   toggletimerain:
-    description: Toogle TimeRain
-    usage: /toggletimerain
+    description: Toggle TimeRain
+    usage: /toggletimerain [on|off]
